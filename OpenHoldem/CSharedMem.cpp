@@ -240,7 +240,7 @@ bool CSharedMem::OverlapsAnyTable(int left, int top, int right, int bottom) {
   return true;
 }
 
-int TablePositionLeft() {
+int TablePositionLeft() { //!!!!! ::
   int session_ID = p_sessioncounter->session_id();
   return table_positions[session_ID].left;
 }
@@ -248,4 +248,12 @@ int TablePositionLeft() {
 int TablePositionTop() {
   int session_ID = p_sessioncounter->session_id();
   return table_positions[session_ID].top;
+}
+
+int CSharedMem::NBotsConnected() {
+  return 0; //!!!
+}
+
+int CSharedMem::NBotsPresent() {
+  return 0;
 }

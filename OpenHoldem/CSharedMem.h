@@ -42,6 +42,11 @@ class CSharedMem {
 	int  SizeOfDenseListOfAttachedPokerWindows();
 	bool IsAnyOpenHoldemProcess(int PID);
  public:
+  // Same result like SizeOfDenseListOfAttachedPokerWindows()
+  // but without depending on the computation of a dense list.
+  int NBotsConnected();
+  int NBotsPresent();
+ public:
   // For table positioner
   // It is most easz if everzbodz shares his position
   void StoreTablePosition(int left, int top, int right, int bottom);

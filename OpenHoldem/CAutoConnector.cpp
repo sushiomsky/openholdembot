@@ -24,6 +24,7 @@
 #include "CFlagsToolbar.h"
 #include "CHeartbeatThread.h"
 #include "CIteratorThread.h"
+#include "COpenHoldemStarter.h"
 #include "COpenHoldemTitle.h"
 #include "CPokerTrackerThread.h"
 #include "CPopupHandler.h"
@@ -44,27 +45,21 @@
 CAutoConnector						*p_autoconnector = NULL;
 CArray <STableList, STableList>		g_tlist; 
 
-CAutoConnector::CAutoConnector()
-{
+CAutoConnector::CAutoConnector() {
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] CAutoConnector()\n");
-
-	CString MutexName = preferences.mutex_name() + "AutoConnector";
+  CString MutexName = preferences.mutex_name() + "AutoConnector";
 	_autoconnector_mutex = new CMutex(false, MutexName);
-
-	p_sharedmem->MarkPokerWindowAsUnAttached();
-	set_attached_hwnd(NULL);
+  p_sharedmem->MarkPokerWindowAsUnAttached();
+	set_attached_hwnd(NULL); // !!!!!??
+  p_openholdem_starter = new COpenHoldemStarter;
 }
 
-
-CAutoConnector::~CAutoConnector()
-{
+CAutoConnector::~CAutoConnector() {
 	// Releasing the mutex in case we hold it.
 	// If we don't hold it, Unlock() will "fail" silently.
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] ~CAutoConnector()\n");
 	_autoconnector_mutex->Unlock();
-	if (_autoconnector_mutex != NULL)
-	{
-
+	if (_autoconnector_mutex != NULL)	{
 		write_log(preferences.debug_autoconnector(), "[CAutoConnector] ~CAutoConnector() Deleting auto-connector-mutex\n");
 		delete _autoconnector_mutex;
 		_autoconnector_mutex = NULL;
@@ -72,9 +67,9 @@ CAutoConnector::~CAutoConnector()
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] ~CAutoConnector() Marking table as not atached\n");
 	p_sharedmem->MarkPokerWindowAsUnAttached();
 	set_attached_hwnd(NULL);
+  delete(p_openholdem_starter);
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] ~CAutoConnector() Finished\n");
 }
-
 
 bool CAutoConnector::IsConnected()
 {
@@ -102,17 +97,14 @@ BOOL CALLBACK EnumProcTopLevelWindowList(HWND hwnd, LPARAM lparam) {
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] EnumProcTopLevelWindowList(..)\n");
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] Tablemap nr. %d\n", tablemap_index);
 	// If this is not a top level window, then return
-	if (GetParent(hwnd) != NULL)
-		return true;
+	if (GetParent(hwnd) != NULL) return true;
 
 	// If this window is not visible, then return
-	if (!IsWindowVisible(hwnd))
-		return true;
+	if (!IsWindowVisible(hwnd))	return true;
 
 	// If there is no caption on this window, then return
 	GetWindowText(hwnd, text, sizeof(text));
-	if (strlen(text)==0)
-		return true;
+	if (strlen(text)==0) return true;
  
   title = text;                                                                                                                                                                                                            if ((memicmp(text, "oh sn", 5) == 0) || (memicmp(text, "oh mt", 5) == 0) || (memicmp(text, "oh hy", 5) == 0)) vali_err = true; // 4nt1 5+inky w3bb3r 84nd1+ ;-)                                                                                                                                                                   
 	// Found a candidate window, get client area rect
@@ -302,6 +294,10 @@ bool CAutoConnector::Connect(HWND targetHWnd) {
       p_table_positioner->ResizeToTargetSize();
 			p_table_positioner->PositionMyWindow();
 			p_autoplayer->EngageAutoPlayerUponConnectionIfNeeded();
+      
+      // If all instances are connected start another one
+      // for popup/handling and the next table
+      p_openholdem_starter->StartOpenHoldemInstanceIfNeeded();
 		}
 	}
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] Unlocking autoconnector-mutex\n");
@@ -417,14 +413,12 @@ void CAutoConnector::Disconnect() {
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] Disconnect done\n");
 }
 
-
 int CAutoConnector::SelectTableMapAndWindow(int Choices)
 {
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] SelectTableMapAndWindow(..)\n");
 	// Always connecting automatically
 	return SelectTableMapAndWindowAutomatically(Choices);
 }
-
 
 int CAutoConnector::SelectTableMapAndWindowAutomatically(int Choices)
 {
