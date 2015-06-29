@@ -27,7 +27,6 @@
 #include "CFlagsToolbar.h"
 #include "CHeartbeatThread.h"
 #include "CIteratorThread.h"
-#include "COpenHoldemHopperCommunication.h"
 #include "COpenHoldemStatusbar.h"
 #include "COpenHoldemTitle.h"
 #include "CPreferences.h"
@@ -48,7 +47,6 @@
 #include "DialogSAPrefs11.h"
 #include "DialogSAPrefs12.h"
 #include "DialogSAPrefs13.h"
-#include "DialogSAPrefs14.h"
 #include "DialogSAPrefs15.h"
 #include "DialogSAPrefs16.h"
 #include "DialogSAPrefs17.h"
@@ -106,15 +104,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_BN_CLICKED(ID_MAIN_TOOLBAR_SHOOTFRAME, &CMainFrame::OnViewShootreplayframe)
   ON_BN_CLICKED(ID_MAIN_TOOLBAR_MANUALMODE, &CMainFrame::OnManualMode)
 	ON_BN_CLICKED(ID_MAIN_TOOLBAR_HELP, &CMainFrame::OnHelp)
-
-	// Hopper
-	ON_MESSAGE(WMA_SETWINDOWTEXT, &COpenHoldemHopperCommunication::OnSetWindowText)
-	ON_MESSAGE(WMA_DOCONNECT,     &COpenHoldemHopperCommunication::OnConnectMessage)
-	ON_MESSAGE(WMA_DODISCONNECT,  &COpenHoldemHopperCommunication::OnDisconnectMessage)
-	ON_MESSAGE(WMA_CONNECTEDHWND, &COpenHoldemHopperCommunication::OnConnectedHwndMessage)
-	ON_MESSAGE(WMA_SETFLAG,       &COpenHoldemHopperCommunication::OnSetFlagMessage)
-	ON_MESSAGE(WMA_RESETFLAG,     &COpenHoldemHopperCommunication::OnResetFlagMessage)
-	ON_MESSAGE(WMA_ISREADY,       &COpenHoldemHopperCommunication::OnIsReadyMessage)
 
 	// Flags
 	ON_BN_CLICKED(ID_NUMBER0,  &CMainFrame::OnClickedFlags)
@@ -363,7 +352,6 @@ void CMainFrame::OnEditPreferences()
 	CDlgSAPrefs11 page11;
 	CDlgSAPrefs12 page12;
 	CDlgSAPrefs13 page13;
-	CDlgSAPrefs14 page14;
 	CDlgSAPrefs15 page15;
 	CDlgSAPrefs16 page16;
 	CDlgSAPrefs17 page17;
@@ -373,7 +361,6 @@ void CMainFrame::OnEditPreferences()
 	CDlgSAPrefs22 page22;
 
 	// add pages
-	dlg.AddPage(page14, "Auto-Connector");
 	dlg.AddPage(page2,  "Autoplayer");
 	dlg.AddPage(page10, "Chat");
 	dlg.AddPage(page17, "Configuration Check");

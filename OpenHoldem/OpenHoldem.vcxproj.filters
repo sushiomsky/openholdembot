@@ -297,9 +297,6 @@
     <ClCompile Include="DialogSAPrefs13.cpp">
       <Filter>Source Files\GUI\prefs_dlg</Filter>
     </ClCompile>
-    <ClCompile Include="DialogSAPrefs14.cpp">
-      <Filter>Source Files\GUI\prefs_dlg</Filter>
-    </ClCompile>
     <ClCompile Include="DialogSAPrefs15.cpp">
       <Filter>Source Files\GUI\prefs_dlg</Filter>
     </ClCompile>
@@ -377,9 +374,6 @@
     </ClCompile>
     <ClCompile Include="VerifyFunctionAndListNames.cpp">
       <Filter>Source Files\GUI\Other Dialogs</Filter>
-    </ClCompile>
-    <ClCompile Include="COpenHoldemHopperCommunication.cpp">
-      <Filter>Source Files\Synchronization</Filter>
     </ClCompile>
     <ClCompile Include="CSessionCounter.cpp">
       <Filter>Source Files\Synchronization</Filter>
@@ -734,6 +728,9 @@
     </ClCompile>
     <ClCompile Include="CSymbolengineIsRush.cpp">
       <Filter>Source Files\Symbols\Symbol_Engines</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogSAPrefs14.cpp">
+      <Filter>Source Files\GUI\Unused_might_be_recycled</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1210,9 +1207,6 @@
     <ClInclude Include="DialogSAPrefs13.h">
       <Filter>Header Files\GUI\prefs_dlg</Filter>
     </ClInclude>
-    <ClInclude Include="DialogSAPrefs14.h">
-      <Filter>Header Files\GUI\prefs_dlg</Filter>
-    </ClInclude>
     <ClInclude Include="DialogSAPrefs15.h">
       <Filter>Header Files\GUI\prefs_dlg</Filter>
     </ClInclude>
@@ -1260,9 +1254,6 @@
     </ClInclude>
     <ClInclude Include="SAPrefsSubDlg.h">
       <Filter>Header Files\GUI\prefs_dlg</Filter>
-    </ClInclude>
-    <ClInclude Include="COpenHoldemHopperCommunication.h">
-      <Filter>Header Files\Synchronization</Filter>
     </ClInclude>
     <ClInclude Include="CSessionCounter.h">
       <Filter>Header Files\Synchronization</Filter>
@@ -1563,6 +1554,9 @@
     </ClInclude>
     <ClInclude Include="CSymbolEngineIsRush.h">
       <Filter>Header Files\Symbols\Symbol_Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogSAPrefs14.h">
+      <Filter>Source Files\GUI\Unused_might_be_recycled</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

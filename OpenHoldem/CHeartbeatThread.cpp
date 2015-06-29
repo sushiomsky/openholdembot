@@ -28,7 +28,6 @@
 #include "CHandresetDetector.h"
 #include "CIteratorThread.h"
 #include "CLazyScraper.h"
-#include "CopenHoldemHopperCommunication.h"
 #include "CopenHoldemStatusbar.h"
 #include "CopenHoldemTitle.h"
 #include "CPreferences.h"
@@ -232,12 +231,11 @@ void CHeartbeatThread::ScrapeEvaluateAct() {
 
 void CHeartbeatThread::AutoConnect() {
 	assert(!p_autoconnector->IsConnected());
-	if (preferences.autoconnector_when_to_connect() == k_AutoConnector_Connect_Permanent) {
-		if (p_autoconnector->TimeSincelast_failed_attempt_to_connect() > 1 /* seconds */) {
-			write_log(preferences.debug_autoconnector(), "[CHeartbeatThread] going to call Connect()\n");
-			p_autoconnector->Connect(NULL);
-		}	else {
-			write_log(preferences.debug_autoconnector(), "[CHeartbeatThread] Reconnection blocked. Other instance failed previously.\n");
-		}
+	// Permanent connection, now per default
+	if (p_autoconnector->TimeSincelast_failed_attempt_to_connect() > 1 /* seconds */) {
+		write_log(preferences.debug_autoconnector(), "[CHeartbeatThread] going to call Connect()\n");
+		p_autoconnector->Connect(NULL);
+	}	else {
+		write_log(preferences.debug_autoconnector(), "[CHeartbeatThread] Reconnection blocked. Other instance failed previously.\n");
 	}
 }

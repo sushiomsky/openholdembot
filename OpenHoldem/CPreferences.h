@@ -287,9 +287,6 @@ public:
 	const bool validator_stop_on_error() { return prefs_numerical_values[k_prefs_validator_stop_on_error]; }
 	const bool validator_use_heuristic_rules() { return prefs_numerical_values[k_prefs_validator_use_heuristic_rules]; }
 	const bool validator_shoot_replayframe_on_error() { return prefs_numerical_values[k_prefs_validator_shoot_replayframe_on_error]; }
-	// Auto-connector
-	const int autoconnector_when_to_connect() { return prefs_numerical_values[k_prefs_autoconnector_when_to_connect]; }
-	const bool autoconnector_close_when_table_disappears() { return prefs_numerical_values[k_prefs_autoconnector_close_when_table_disappears]; }
 	// GUI
 	const bool gui_start_minimized() { return prefs_numerical_values[k_prefs_gui_start_minimized]; }
 	// Rebuy

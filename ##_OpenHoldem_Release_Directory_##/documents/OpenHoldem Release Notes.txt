@@ -1,3 +1,16 @@
+v8.0.0 2015-07.xx
+==================
+MAINTENANCE:
+- The auto-connector is now always enabled per default.
+  The auto-connector-options got removed.
+  [THF]
+- Removed the module COpenHoldemHopperCommunication,
+  as it mainly supported user-controlled connections
+  when the auto-connector did not yet exist.
+  It was very rarely used and now became superfluous.
+  [THF]
+
+  
 v7.7.4 2015-06.xx
 ==================
 NEW STUFF:

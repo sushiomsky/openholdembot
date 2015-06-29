@@ -248,7 +248,9 @@
     <ClCompile Include="DialogSAPrefs11.cpp" />
     <ClCompile Include="DialogSAPrefs12.cpp" />
     <ClCompile Include="DialogSAPrefs13.cpp" />
-    <ClCompile Include="DialogSAPrefs14.cpp" />
+    <ClCompile Include="DialogSAPrefs14.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="DialogSAPrefs15.cpp" />
     <ClCompile Include="DialogSAPrefs16.cpp" />
     <ClCompile Include="DialogSAPrefs17.cpp" />
@@ -288,7 +290,6 @@
     <ClCompile Include="OpenHoldemView.cpp" />
     <ClCompile Include="ScintillaWnd.cpp" />
     <ClCompile Include="VerifyFunctionAndListNames.cpp" />
-    <ClCompile Include="COpenHoldemHopperCommunication.cpp" />
     <ClCompile Include="CSessionCounter.cpp" />
     <ClCompile Include="CSharedMem.cpp" />
     <ClCompile Include="CBetroundCalculator.cpp" />
@@ -588,7 +589,9 @@
     <ClInclude Include="DialogSAPrefs11.h" />
     <ClInclude Include="DialogSAPrefs12.h" />
     <ClInclude Include="DialogSAPrefs13.h" />
-    <ClInclude Include="DialogSAPrefs14.h" />
+    <ClInclude Include="DialogSAPrefs14.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="DialogSAPrefs15.h" />
     <ClInclude Include="DialogSAPrefs16.h" />
     <ClInclude Include="DialogSAPrefs17.h" />
@@ -611,7 +614,6 @@
     <ClInclude Include="SAPrefsDialog.h" />
     <ClInclude Include="SAPrefsStatic.h" />
     <ClInclude Include="SAPrefsSubDlg.h" />
-    <ClInclude Include="COpenHoldemHopperCommunication.h" />
     <ClInclude Include="CSessionCounter.h" />
     <ClInclude Include="CSharedMem.h" />
     <ClInclude Include="..\CCritSec\CCritSec.h" />

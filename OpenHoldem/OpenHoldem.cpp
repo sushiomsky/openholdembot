@@ -26,7 +26,7 @@
 #include "CFormulaParser.h"
 #include "CHeartbeatThread.h"
 #include "CIteratorThread.h"
-#include "COpenHoldemHopperCommunication.h"
+
 #include "COpenHoldemTitle.h"
 #include "CPreferences.h"
 #include "CSessionCounter.h"
@@ -264,13 +264,6 @@ void COpenHoldemApp::FinishInitialization() {
   // Iterator thread
   p_iterator_thread = new CIteratorThread();
   assert(p_iterator_thread != NULL);
-
-    // autoconnect on start, if preferred
-	write_log(preferences.debug_openholdem(), "[OpenHoldem] Going to connect\n");
-	if (preferences.autoconnector_when_to_connect() == k_AutoConnector_Connect_Once)
-	{
-		p_autoconnector->Connect(NULL);
-	}
 }
 
 int COpenHoldemApp::ExitInstance() {
