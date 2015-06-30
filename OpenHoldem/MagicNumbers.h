@@ -228,6 +228,7 @@ enum StandardFunctionConstants
   k_hopper_function_rematch,
 	k_hopper_function_autopost,
 	k_hopper_function_close,
+  k_hopper_function_terminate,
 	k_hopper_function_rebuy,
 	// Other functions
   k_standard_function_prefold,
@@ -301,6 +302,7 @@ const char k_standard_function_names[k_number_of_standard_functions][k_max_lengt
   "f$rematch",
 	"f$autopost",
 	"f$close",
+  "f$terminate",
 	"f$rebuy",
 	// Other functions
   "f$prefold",

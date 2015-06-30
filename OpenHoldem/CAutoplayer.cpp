@@ -322,6 +322,14 @@ bool CAutoplayer::ExecuteSecondaryFormulasIfNecessary() {
 			executed_secondary_function = k_hopper_function_close;
 		}
 	}
+  else if (p_autoplayer_functions->GetAutoplayerFunctionValue(k_hopper_function_terminate))	{
+    if (p_autoconnector->IsConnected()) {
+      write_log(preferences.debug_autoplayer(), "[AutoPlayer] Connected. Ignoring f$terminate\n");
+    } else {
+      write_log(preferences.debug_autoplayer(), "[AutoPlayer] Going to f$terminate\n");
+		  PostQuitMessage(0);
+    }
+	}
 	else if (p_autoplayer_functions->GetAutoplayerFunctionValue(k_hopper_function_rebuy))	{
 		// This requires an external script and some time.
 		// No further actions here eihter, but immediate return.
