@@ -143,25 +143,37 @@ UINT CHeartbeatThread::HeartbeatThreadFunction(LPVOID pParam) {
 		if(::WaitForSingleObject(pParent->_m_stop_thread, 0) == WAIT_OBJECT_0) {
 			// Set event
 			::SetEvent(pParent->_m_wait_thread);
+      write_log(preferences.debug_heartbeat(), "[HeartBeatThread] Ending thread\n");
 			AfxEndThread(0);
 		}
     LogMemoryUsage("Begin of heartbeat thread cycle");
 		p_tablemap_loader->ReloadAllTablemapsIfChanged();
 		if (p_autoconnector->IsConnected()) {
 			if (IsWindow(p_autoconnector->attached_hwnd()))	{
+        write_log(preferences.debug_heartbeat(), "[HeartBeatThread] ScrapeEvaluateAct()\n");
         ScrapeEvaluateAct();
       } else {
 				// Table disappeared
+        write_log(preferences.debug_heartbeat(), "[HeartBeatThread] Table disappeared\n");
 				p_autoplayer->EngageAutoplayer(false);
 				p_autoconnector->Disconnect();
 			}			
 		}	else {
-			// Not connected
+      // Not connected
+      // Considering f$terminate
+      // !! potential race/condition here
+		  if (p_autoplayer_functions->GetAutoplayerFunctionValue(k_hopper_function_terminate)) 	{
+        write_log(preferences.debug_heartbeat(), "[HeartBeatThread] Going to f$terminate\n");
+        AfxGetMainWnd()->SendMessage(WM_CLOSE);
+        break;
+      }	
+      write_log(preferences.debug_heartbeat(), "[HeartBeatThread] AutoConnect()\n");
       AutoConnect();
 		}
 		FlexibleHeartbeatSleeping();
 		write_log(preferences.debug_heartbeat(), "[HeartBeatThread] Heartbeat cycle ended\n");
 	}
+  return 0;
 }
 
 void CHeartbeatThread::ScrapeEvaluateAct() {
