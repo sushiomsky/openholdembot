@@ -82,7 +82,6 @@ const char* k_registry_keys_for_numerical_values[k_prefs_last_numerical_value + 
 	"use_auto_replay",
 	"swag_use_comma",
 	"replay_record",
-	"log_basic_info",
 	"trace_enabled",
 	"basic_logging_enabled",
 	"error_logging_enabled",
@@ -141,8 +140,7 @@ const char* k_registry_keys_for_numerical_values[k_prefs_last_numerical_value + 
 	"",
 };
 
-const char* k_registry_keys_for_CStrings[k_prefs_last_CString_value + 1] =
-{
+const char* k_registry_keys_for_CStrings[k_prefs_last_CString_value + 1] = {
 	"dll_name",
 	"pt_ip_addr",
 	"pt_port",
@@ -162,14 +160,12 @@ const char* k_registry_keys_for_CStrings[k_prefs_last_CString_value + 1] =
 	"",
 };
 
-void CPreferences::LoadPreferences()
-{
+void CPreferences::LoadPreferences() {
 	_preferences_heading = "Preferences";
 	InitDefaults();
 	ReadPreferences();
   CheckForOutdatedICMConfig();
 }
-
 
 void CPreferences::CheckForOutdatedICMConfig() {
   if (prefs_numerical_values[k_prefs_icm_prize1] != kUndefinedZero) {
@@ -187,16 +183,13 @@ void CPreferences::CheckForOutdatedICMConfig() {
 //
 // Private method to initialize the default values
 //
-void CPreferences::InitDefaults(void)
-{
+void CPreferences::InitDefaults(void) {
 	// General initialization
 	// that fits most values and purposes
-	for (int i=0; i<k_prefs_last_numerical_value; i++)
-	{
+	for (int i=0; i<k_prefs_last_numerical_value; i++) {
 		prefs_numerical_values[i] = 0.0;	// 0 for ints and false for bools
 	}
-	for (int i=0; i<k_prefs_last_CString_value; i++)
-	{
+	for (int i=0; i<k_prefs_last_CString_value; i++) {
 		prefs_CString_values[i] = "";
 	}
 
@@ -209,6 +202,13 @@ void CPreferences::InitDefaults(void)
 	prefs_numerical_values[k_prefs_basic_logging_enabled] = true;
 	prefs_numerical_values[k_prefs_error_logging_enabled] = true;
 	prefs_numerical_values[k_prefs_dll_logging_enabled] = true;
+
+  F|
+	k_prefs_trace_enabled,
+	k_prefs_basic_logging_enabled,
+	k_prefs_error_logging_enabled,
+	k_prefs_dll_logging_enabled,
+
 	prefs_numerical_values[k_prefs_debug_preferences] = true; // To assure that we log at least the initialization of this value
 	prefs_numerical_values[k_prefs_rebuy_condition_no_cards] = true;
 	prefs_numerical_values[k_prefs_rebuy_condition_change_in_handnumber] = true;
