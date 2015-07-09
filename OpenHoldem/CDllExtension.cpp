@@ -155,8 +155,6 @@ extern "C" __declspec(dllexport) double __stdcall GetSymbolFromDll(const int cha
 	return result;
 }
 
-
-
 extern "C" __declspec(dllexport) void __stdcall SendChatMessageFomDll(const char *msg)
 {
 	SendChatMessage((char *)msg);
