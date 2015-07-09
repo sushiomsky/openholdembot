@@ -562,6 +562,7 @@ const bool k_ThisMustNotHappen = false;
 // For logging
 const bool k_always_log_errors = true;
 const bool k_always_log_basic_information = true;
+const bool kAlwaysLogAutoplayerTrace = true;
 const int  kMaxLogSymbolsForWhiteBox = 1;
 
 // For string handling

@@ -59,10 +59,8 @@ void CAutoplayerFunctions::CalcPrimaryFormulas() {
 
 void CAutoplayerFunctions::CalcPrimaryFormulasOHScript() {
   write_log(preferences.debug_formula(), "[CAutoplayerFunctions] CalcPrimaryFormulasOHScript()\n");
-  bool trace_needed = preferences.trace_enabled();
-  write_log(preferences.debug_formula(), "[CAutoplayerFunctions] Trace enabled: %s\n", Bool2CString(preferences.trace_enabled()));
 	for (int i=k_autoplayer_function_beep; i<=k_autoplayer_function_fold; i++) {
-		double result = p_function_collection->Evaluate(k_standard_function_names[i], trace_needed);
+		double result = p_function_collection->Evaluate(k_standard_function_names[i], kAlwaysLogAutoplayerTrace);
 		write_log(preferences.debug_formula(), "[CAutoplayerFunctions] Primary formulas; %s: %f\n", 
 			k_standard_function_names[i], result);
 	}
@@ -70,8 +68,6 @@ void CAutoplayerFunctions::CalcPrimaryFormulasOHScript() {
 
 void CAutoplayerFunctions::CalcPrimaryFormulasOpenPPL() {
   write_log(preferences.debug_formula(), "[CAutoplayerFunctions] CalcPrimaryFormulasOpenPPL()\n");
-  bool trace_needed = preferences.trace_enabled();
-  write_log(preferences.debug_formula(), "[CAutoplayerFunctions] Trace enabled: %s\n", Bool2CString(preferences.trace_enabled()));
   // First do the calculation of memory/history-symbols,
   //   * exactly once per my turn
   //   * when we have stable frames (isfinal-answer == true)
@@ -88,7 +84,7 @@ void CAutoplayerFunctions::CalcPrimaryFormulasOpenPPL() {
     return;
   }
   double decision = p_function_collection->Evaluate(k_OpenPPL_function_names[betround], 
-    trace_needed);
+    kAlwaysLogAutoplayerTrace);
   write_log(preferences.debug_formula(), 
     "[CAutoplayerFunctions] Decision (non-translated) = %.2f\n", decision);
   TranslateOpenPPLDecisionToAutoplayerFunctions(decision);

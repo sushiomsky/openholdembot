@@ -95,11 +95,7 @@ enum
 	k_prefs_use_auto_replay,
 	k_prefs_swag_use_comma,
 	k_prefs_replay_record,
-	k_prefs_log_basic_info,
-	k_prefs_trace_enabled,
-	k_prefs_basic_logging_enabled,
-	k_prefs_error_logging_enabled,
-	k_prefs_dll_logging_enabled,
+  k_prefs_dll_logging_enabled,
 	k_prefs_disable_msgbox,
 	k_prefs_validator_stop_on_error,
 	k_prefs_validator_use_heuristic_rules,
@@ -216,12 +212,8 @@ public:
 	// Logging and debugging
 	const bool disable_msgbox() { return prefs_numerical_values[k_prefs_disable_msgbox]; }
 	const int log_max_logsize() { return prefs_numerical_values[k_prefs_log_max_logsize]; }
-
-	const bool trace_enabled()				{ return prefs_numerical_values[k_prefs_trace_enabled]; }
-	const bool basic_logging_enabled()		{ return prefs_numerical_values[k_prefs_basic_logging_enabled]; }
-	const bool error_logging_enabled()		{ return prefs_numerical_values[k_prefs_error_logging_enabled]; }
-	const bool dll_logging_enabled()		{ return prefs_numerical_values[k_prefs_dll_logging_enabled]; }
-
+  const bool dll_logging_enabled()		{ return prefs_numerical_values[k_prefs_dll_logging_enabled]; }
+  
 	// Debugging
 	const bool	debug_autoconnector() { return prefs_numerical_values[k_prefs_debug_autoconnector]; }
 	const bool	debug_autoplayer() { return prefs_numerical_values[k_prefs_debug_autoplayer]; }

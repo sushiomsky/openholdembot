@@ -82,10 +82,7 @@ const char* k_registry_keys_for_numerical_values[k_prefs_last_numerical_value + 
 	"use_auto_replay",
 	"swag_use_comma",
 	"replay_record",
-	"trace_enabled",
-	"basic_logging_enabled",
-	"error_logging_enabled",
-	"dll_logging_enabled",
+  "dll_logging_enabled",
 	"disable_msgbox",
 	"validator_stop_on_error",
 	"validator_use_heuristic_rules",
@@ -198,17 +195,7 @@ void CPreferences::InitDefaults(void) {
 	prefs_numerical_values[k_prefs_engage_autoplayer] = true;
 	prefs_numerical_values[k_prefs_restore_position_and_focus] = false;
 	prefs_numerical_values[k_prefs_use_auto_replay] = true;
-	prefs_numerical_values[k_prefs_trace_enabled] = true;
-	prefs_numerical_values[k_prefs_basic_logging_enabled] = true;
-	prefs_numerical_values[k_prefs_error_logging_enabled] = true;
-	prefs_numerical_values[k_prefs_dll_logging_enabled] = true;
-
-  F|
-	k_prefs_trace_enabled,
-	k_prefs_basic_logging_enabled,
-	k_prefs_error_logging_enabled,
-	k_prefs_dll_logging_enabled,
-
+  prefs_numerical_values[k_prefs_dll_logging_enabled] = true;
 	prefs_numerical_values[k_prefs_debug_preferences] = true; // To assure that we log at least the initialization of this value
 	prefs_numerical_values[k_prefs_rebuy_condition_no_cards] = true;
 	prefs_numerical_values[k_prefs_rebuy_condition_change_in_handnumber] = true;
