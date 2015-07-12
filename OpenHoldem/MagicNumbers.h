@@ -153,6 +153,7 @@ const int k_number_of_holdem_states_for_DLL = 256;
 
 // Flags
 const int k_number_of_flags = 20;
+const int kLastFlag = k_number_of_flags - 1;
 
 // Suits and ranks
 const int k_number_of_suits_per_deck  =  4;

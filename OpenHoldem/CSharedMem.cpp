@@ -251,9 +251,23 @@ int TablePositionTop() {
 }
 
 int CSharedMem::NBotsConnected() {
-  return 0; //!!!
+  ENT;
+  int n_bots_connected = 0;
+  for (int i=0; i<MAX_SESSION_IDS; ++i) {
+    if (attached_poker_windows[i] != NULL) {
+      ++n_bots_connected;
+    }
+  }
+  return n_bots_connected;
 }
 
 int CSharedMem::NBotsPresent() {
-  return 0;
+  ENT;
+  int n_bots_present = 0;
+  for (int i=0; i<MAX_SESSION_IDS; ++i) {
+    if (openholdem_PIDs[i] != 0) {
+      ++n_bots_present;
+    }
+  }
+  return n_bots_present;
 }

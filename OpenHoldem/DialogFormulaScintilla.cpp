@@ -1973,11 +1973,16 @@ void CDlgFormulaScintilla::PopulateSymbols()
 
 	HTREEITEM mainParent, parent;
 	mainParent = parent = AddSymbolTitle("General symbols", NULL, hCatItem);
-	AddSymbol(parent, "nchairs", "the integer value for the Table Map symbol _s$nchairs");
-	AddSymbol(parent, "session", "the current logging instance (0-24)");
 	AddSymbol(parent, "version", "returns the version number of OpenHoldem that is currently running");
+  AddSymbol(parent, "session", "the current logging instance (0-24)");
+
+  mainParent = parent = AddSymbolTitle("Hopper symbols", NULL, hCatItem);
+  AddSymbol(parent, "attached_hwnd", "Window handle of the poker table");
+  AddSymbol(parent, "nbotspresent", "number of OpenHoldem instances that are currently running");
+  AddSymbol(parent, "nbotsconnected", "number of OpenHoldem instances that are currently connected to a poker table (or to the lobby or to something else)");
 
 	mainParent = parent = AddSymbolTitle("Table Map symbols", NULL, hCatItem);
+  AddSymbol(parent, "nchairs", "the integer value for the Table Map symbol _s$nchairs");
 	AddSymbol(parent, "sitename$abc", "true if user defined string abc appears within the Table Map symbol _s$_sitename");
 	AddSymbol(parent, "network$def", "true if user defined string def appears within the Table Map symbol _s$_network");
 
@@ -1994,12 +1999,15 @@ void CDlgFormulaScintilla::PopulateSymbols()
 	AddSymbol(parent, "isnl", "(lim==0)");
 	AddSymbol(parent, "ispl", "(lim==1)");
 	AddSymbol(parent, "isfl", "(lim==2)");
+
+  mainParent = parent = AddSymbolTitle("GameTzpe", NULL, hCatItem);
 	AddSymbol(parent, "istournament", "true if a tournament table is detected");
   AddSymbol(parent, "isdon", "true if a double-or-nothing tournament is detected");
   AddSymbol(parent, "ismtt", "true if a multi-table tournament is detected");
   AddSymbol(parent, "issng", "true if a single-table tournament is detected");
   AddSymbol(parent, "isfinaltable", "true if you are playing the finaltable of an MTT and the tables can be visually distinguished.");
   AddSymbol(parent, "isrush", "true if the game is rush / zoom.");
+  AddSymbol(parent, "islobby", "true if this bot is connected to the lobby (depends on s$islobby)");
 	
   mainParent = parent = AddSymbolTitle("MTT Info", NULL, hCatItem);
 	AddSymbol(parent, "mtt_number_entrants", "number of entrants in the tournament");
@@ -2146,6 +2154,7 @@ void CDlgFormulaScintilla::PopulateSymbols()
 	AddSymbol(parent, "opponentsplayingbits", "bits 9-0: 1=playing 0=notplaying");
 	AddSymbol(parent, "opponentsblindbits", "bits 9-0: 1=blind 0=notblind");
 	AddSymbol(parent, "opponent_chair_headsup",  "headsup opponent chair number (0-9)");
+  AddSymbol(parent, "colourcode0 - colourcode9", "the scraped colour-codes for chair 0..9");
 
   mainParent = parent = AddSymbolTitle("Flags", NULL, hCatItem);
 	AddSymbol(parent, "fmax", "highest numbered flag button pressed");
