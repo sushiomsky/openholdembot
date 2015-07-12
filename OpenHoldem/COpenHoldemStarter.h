@@ -17,9 +17,18 @@ class COpenHoldemStarter {
   COpenHoldemStarter();
   ~COpenHoldemStarter();
  public:
-  // To be called by the auto/connector on connection
+  // To be called by the auto-connector on connection
   void StartOpenHoldemInstanceIfNeeded();
+ public:
+  // Works only if called within the "main thread"
+  // that contains a message/handler for WM_QUIT
+  void CloseOpenHoldemIfInstanceNotNeeded();
  private:
   bool NewInstanceNeeded();
   void StartOpenHoldemInstance();
+ private:
+  // Works only if called within the "main thread"
+  // that contains a message/handler for WM_QUIT
+  void Terminate();
+  bool InstanceMayBeClosed();
 };
