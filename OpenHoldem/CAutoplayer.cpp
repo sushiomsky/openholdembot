@@ -99,15 +99,26 @@ void CAutoplayer::FinishActionSequenceIfNecessary() {
     }
     // avoid multiple-clicks within a short frame of time
     p_stableframescounter->ResetOnAutoplayerAction();
+    //!!!!! remove preferences.restore_position_and_focus()
     if (p_symbol_engine_casino->ConnectedToOfflineSimulation() || preferences.restore_position_and_focus()) {
       // Restore mouse position and window focus
       // Only for simulations, not for real casinos (stealth).
 		  // Restoring the original state has to be done in reversed order
 		  SetFocus(window_with_focus);
 		  SetCursorPos(cursor_position.x, cursor_position.y);
+    } else {
+      MoveMouseToParkingZone();
     }
 		action_sequence_needs_to_be_finished = false;
 	}
+}
+
+void CAutoplayer::MoveMouseToParkingZone() {
+  //!!!!!
+  // If other instances in autoplayer-waiting-queue then ignore the parking-zone.
+  // The mouse will be moved shortly, superfluous movements are undesired.
+
+
 }
 
 bool CAutoplayer::TimeToHandleSecondaryFormulas() {
