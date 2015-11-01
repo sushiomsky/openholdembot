@@ -223,7 +223,8 @@ void CFormulaParser::CheckForExtraTokensAfterEndOfFunction(){
 	int token_ID = _tokenizer.GetToken();
 	if ((token_ID != kTokenEndOfFile)
 		  && (token_ID != kTokenEndOfFunction))	{
-		CParseErrors::Error("Unexpected token(s) after end of function.\n");
+		CParseErrors::Error("Unexpected token(s) after end of function.\n"
+      "There might be a closing bracket too much or an operator missing.\n");
 	}
 	// Nothing more to do here, not even returning a result.
 	// We are finished and just warn about the extra input.

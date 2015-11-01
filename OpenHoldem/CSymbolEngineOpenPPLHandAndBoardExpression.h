@@ -16,12 +16,11 @@
 
 #include "CVirtualSymbolEngine.h"
 
-class CSymbolEngineOpenPPLHandAndBoardExpression: public CVirtualSymbolEngine
-{
-public:
+class CSymbolEngineOpenPPLHandAndBoardExpression: public CVirtualSymbolEngine {
+ public:
 	CSymbolEngineOpenPPLHandAndBoardExpression();
 	~CSymbolEngineOpenPPLHandAndBoardExpression();
-public:
+ public:
 	// Mandatory reset-functions
 	void InitOnStartup();
 	void ResetOnConnection();
@@ -29,20 +28,22 @@ public:
 	void ResetOnNewRound();
 	void ResetOnMyTurn();
 	void ResetOnHeartbeat();
-public:
+ public:
 	// Public accessors
 	bool EvaluateSymbol(const char *name, double *result, bool log = false);
 	CString SymbolsProvided();
-private:
+ private:
+  bool IncorrectSuitSpecification(const char *name);
+ private:
   // defaulting to kUndefinedZero, because this value gets used as an index
 	int PrimeCodedRanks(int rank_0,	int rank_1, 
 		int opt_rank_2 = kUndefinedZero, int opt_rank_3 = kUndefinedZero, 
 		int opt_rank_4 = kUndefinedZero);
 	int PrimeCodedRanks(CString card_expression);
-private:
+ private:
 	int _prime_coded_hole_cards;
 	int _prime_coded_board_cards;
-private:
+ private:
 	int prime_coded_available_ranks;
 	bool is_hand_expression;
 	bool is_board_expression;

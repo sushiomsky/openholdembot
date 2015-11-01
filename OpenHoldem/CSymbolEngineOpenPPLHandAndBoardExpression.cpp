@@ -17,6 +17,7 @@
 #include "CSymbolEngineCards.h"
 #include "CSymbolEnginePokerval.h"
 #include "CardFunctions.h"
+#include "CParseErrors.h"
 #include "CPreferences.h"
 #include "CTableState.h"
 #include "StringFunctions.h"
@@ -85,6 +86,33 @@ void CSymbolEngineOpenPPLHandAndBoardExpression::ResetOnHeartbeat() {
 		_prime_coded_board_cards);
 }
 
+bool CSymbolEngineOpenPPLHandAndBoardExpression::IncorrectSuitSpecification(const char *name) {
+  // http://www.maxinmontreal.com/forums/viewtopic.php?f=111&t=18967
+  int length = strlen(name);
+  // Minimum length: hand$X = 6
+  // Otherwise we shouldn't evaluate this function
+  assert(length >= 6);
+  char last_character = tolower(name[length - 1]);
+  char third_last_character = tolower(name[length - 3]);
+  // First error-case: 'o' assuming "offsuited"
+  if (last_character == 'o') return true;
+  // Second error-case: 's' assuming "suited"
+  // 's' may be correct for "spades", but then all previous
+  // cards need a suit/specification too (or we see a '$'
+  // from hand$ or board$ at 3rd last position.
+  if (last_character == 's') {
+    switch (third_last_character) {
+      case 'c':
+      case 'd':
+      case 'h':
+      case 's':
+      case '$': return false;
+      default: return true;
+    }
+  }
+  return false;
+}
+
 bool CSymbolEngineOpenPPLHandAndBoardExpression::EvaluateSymbol(const char *name, double *result, bool log /* = false */) {
 	// First check, if hand$ or board$ and/or Suited
 	// At the same time remove the unnecessary parts of the expression
@@ -110,6 +138,24 @@ bool CSymbolEngineOpenPPLHandAndBoardExpression::EvaluateSymbol(const char *name
 		// Quick exit on other symbols
 		return false;
 	}
+  // Now that we recognized a hand$ or board$ expression
+  // we have to check for the most common mistakes,
+  // a trailing "o" or "s" for (off)suited.
+  // http://www.maxinmontreal.com/forums/viewtopic.php?f=111&t=18967
+  if (IncorrectSuitSpecification(name)) {
+    CString error_message;
+    error_message.Format("Incorrect suit specification\n"
+      "hand$ and board$ expressions may use\n"
+      "  * \"Suited\" at the end\n"
+      "  * \"Offsuited\" at the end\n"
+      "  * Individual suits [c, d, h, s], starting at the first card\n"
+      "but not 'o' or a lone 's' at the end.\n");
+    // We evaluate each symbol at load-time
+    // therefore we generate a paerse-error here.
+    CParseErrors::Error(error_message);
+    *result = false;
+    return true;
+  }
 
   write_log(preferences.debug_hand_and_baord_expressions(), 
     "[CSymbolEngineOpenPPLHandAndBoardExpression] Encoded available ranks: %i\n",
@@ -220,12 +266,10 @@ int CSymbolEngineOpenPPLHandAndBoardExpression::PrimeCodedRanks(int rank_0,
 	int rank_1, int opt_rank_2, int opt_rank_3, int opt_rank_4) {
 	int result = 1;
 	int ranks[kNumberOfCommunityCards];
-
   write_log(preferences.debug_hand_and_baord_expressions(),
     "[CSymbolEngineOpenPPLHandAndBoardExpression] Given ranks = %i, %i, %i, %i, %i\n",
     rank_0, rank_1, opt_rank_2, opt_rank_3, opt_rank_4);
-
-	ranks[0] = rank_0;
+  ranks[0] = rank_0;
 	ranks[1] = rank_1;
 	ranks[2] = opt_rank_2;
 	ranks[3] = opt_rank_3;
@@ -251,16 +295,12 @@ int CSymbolEngineOpenPPLHandAndBoardExpression::PrimeCodedRanks(int rank_0,
 	return result;
 }
 
-int CSymbolEngineOpenPPLHandAndBoardExpression::PrimeCodedRanks(CString card_expression)
-{
+int CSymbolEngineOpenPPLHandAndBoardExpression::PrimeCodedRanks(CString card_expression) {
 	int result = 1;
 	int length = card_expression.GetLength();
-
-	for (int i=0; i<length; i++)
-	{
+  for (int i=0; i<length; i++) {
 		char next_character = card_expression[i];
-		if (!IsCardRankCharacter(next_character))
-		{
+		if (!IsCardRankCharacter(next_character))	{
 			// The expression might contain suits,
 			// so simply continue on unexpected characters
 			continue;
