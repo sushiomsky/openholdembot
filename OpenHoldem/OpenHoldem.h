@@ -50,9 +50,11 @@ private:
 	void OpenLastRecentlyUsedFile();
 
 public:
+  // !!!!! Serious need for refactoring!
 	mouse_process_message_t		_dll_mouse_process_message;
 	mouse_click_t				_dll_mouse_click;
 	mouse_clickdrag_t			_dll_mouse_click_drag;
+  mouse_move_t			_dll_mouse_move;
 	keyboard_process_message_t	_dll_keyboard_process_message;
 	keyboard_sendstring_t		_dll_keyboard_sendstring;
 	keyboard_sendkey_t			_dll_keyboard_sendkey;
@@ -62,7 +64,7 @@ public:
 
 	HMODULE							_scraper_dll;
 	scraper_process_message_t		_dll_scraper_process_message;
-	scraper_override_t				_dll_scraper_override;
+	scraper_override_t				  _dll_scraper_override;
 private:
 	void FinishInitialization();
 };

@@ -11,8 +11,6 @@
 //
 //******************************************************************************
 
-
-
 #ifndef INC_MOUSEDLL_H
 #define INC_MOUSEDLL_H
 
@@ -34,6 +32,10 @@ MOUSEDLL_API int MouseClickDrag(const HWND hwnd, const RECT rect, const HWND res
 
 typedef void (*mouse_process_message_t)(const char *message, const void *param);
 MOUSEDLL_API void ProcessMessage(const char *message, const void *param);
+
+// For parkingzone
+typedef int (*mouse_move_t)(const HWND hwnd, const RECT rect);
+MOUSEDLL_API int MouseMove(const HWND hwnd, const RECT rect);
 
 const POINT RandomizeClickLocation(const RECT rect);
 const void GetClickPoint(const int x, const int y, const int rx, const int ry, POINT *p);

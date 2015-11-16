@@ -149,9 +149,11 @@ BOOL COpenHoldemApp::InitInstance() {
 		_dll_mouse_process_message = (mouse_process_message_t) GetProcAddress(_mouse_dll, "ProcessMessage");
 		_dll_mouse_click = (mouse_click_t) GetProcAddress(_mouse_dll, "MouseClick");
 		_dll_mouse_click_drag = (mouse_clickdrag_t) GetProcAddress(_mouse_dll, "MouseClickDrag");
+    _dll_mouse_move = (mouse_move_t) GetProcAddress(_mouse_dll, "MouseMove");
 
-		if (_dll_mouse_process_message==NULL || _dll_mouse_click==NULL || _dll_mouse_click_drag==NULL)
-		{
+		if (_dll_mouse_process_message==NULL || _dll_mouse_click==NULL 
+      || _dll_mouse_click_drag==NULL || _dll_mouse_move==NULL)
+    {
 			CString		t = "";
 			t.Format("Unable to find all symbols in mouse.dll");
 			OH_MessageBox_Error_Warning(t, "OpenHoldem mouse.dll ERROR");

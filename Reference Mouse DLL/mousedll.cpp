@@ -183,6 +183,41 @@ MOUSEDLL_API int MouseClickDrag(const HWND hwnd, const RECT rect, const HWND res
 	return (int) true;
 }
 
+MOUSEDLL_API int MouseMove(const HWND hwnd, const RECT rect) {
+  POINT randomized_point = RandomizeClickLocation(rect); // !!!!! Does not work due to bug. See RandomizeClickLocation
+  randomized_point.x = 10;
+  randomized_point.y = 10;
+  
+  double fScreenWidth = ::GetSystemMetrics( SM_CXSCREEN )-1;
+	double fScreenHeight = ::GetSystemMetrics( SM_CYSCREEN )-1;
+
+	// Translate click point to screen/mouse coords
+	ClientToScreen(hwnd, &randomized_point);
+	double fx = randomized_point.x*(65535.0f/fScreenWidth);
+	double fy = randomized_point.y*(65535.0f/fScreenHeight);
+
+	// Set up the input structure
+  INPUT	input[1];
+	ZeroMemory(&input[0],sizeof(INPUT));
+	input[0].type = INPUT_MOUSE;
+	input[0].mi.dx = (LONG) fx;
+	input[0].mi.dy = (LONG) fy;
+	input[0].mi.dwFlags = MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE | 
+
+  // Set focus to target window
+	/*!!! Window should already be active
+  Activating it again might be a red flag
+  
+  SetFocus(hwnd);
+	SetForegroundWindow(hwnd);
+	SetActiveWindow(hwnd);*/
+
+	// Send input
+	SendInput(1, input, sizeof(INPUT));
+
+  return (int) true;
+}
+
 MOUSEDLL_API void ProcessMessage(const char *message, const void *param)
 {
 	if (message==NULL)  return;
@@ -201,6 +236,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     return true;
 }
 
+//!!!!! Returns point on the call/stack! Needs to be fixed!
 const POINT RandomizeClickLocation(const RECT rect) 
 {
 	POINT p = {0};

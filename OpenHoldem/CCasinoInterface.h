@@ -33,6 +33,7 @@ class CCasinoInterface {
 	bool ClickI86ButtonIfAvailable(int button_number);
 	int  NumberOfVisibleAutoplayerButtons();
   void PressTabToSwitchOHReplayToNextFrame();
+  void MoveMouseToParkingZone();
  private:
 	bool TableLostFocus();
 	void ClickRect(RECT rect);

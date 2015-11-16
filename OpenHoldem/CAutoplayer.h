@@ -53,7 +53,6 @@ class CAutoplayer {
  private:
   void PrepareActionSequence();
 	void FinishActionSequenceIfNecessary();
-  void MoveMouseToParkingZone();
  private:
 	// private variables - use public accessors and public mutators to address these
 	bool	_autoplayer_engaged;
