@@ -205,6 +205,7 @@
     <ClCompile Include="crc32hash.cpp" />
     <ClCompile Include="CScrapedActionInterface.cpp" />
     <ClCompile Include="CSelftestParserEvaluator.cpp" />
+    <ClCompile Include="CSharedTableInfo.cpp" />
     <ClCompile Include="CSymbolEngineCallers.cpp" />
     <ClCompile Include="CSymbolEngineCasino.cpp" />
     <ClCompile Include="CSymbolEngineChairs.cpp" />
@@ -480,6 +481,7 @@
     <ClInclude Include="crc32hash.h" />
     <ClInclude Include="CScrapedActionInterface.h" />
     <ClInclude Include="CSelftestParserEvaluator.h" />
+    <ClInclude Include="CSharedTableInfo.h" />
     <ClInclude Include="CSymbolEngineCallers.h" />
     <ClInclude Include="CSymbolEngineCasino.h" />
     <ClInclude Include="CSymbolengineChairs.h" />

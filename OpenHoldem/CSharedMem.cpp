@@ -17,6 +17,7 @@
 #include "CPreferences.h"
 #include "crc32hash.h"
 #include "CSessionCounter.h"
+#include "CSharedTableInfo.h"
 #include "CSymbolEngineRandom.h"
 #include "OH_MessageBox.h"
 
@@ -38,14 +39,13 @@
 
 #pragma data_seg(".ohshmem") // names are limited to 8 chars, including the dot.
 
-__declspec(allocate(".ohshmem"))	static	HWND	 attached_poker_windows[MAX_SESSION_IDS] = { NULL };	// for the auto-connector
+__declspec(allocate(".ohshmem"))	static	CSharedTableInfo tables[MAX_SESSION_IDS] = { NULL };	// for the auto-connector and table-posityioner
 __declspec(allocate(".ohshmem"))	static	time_t last_failed_attempt_to_connect;	// last time any instance failed; to avoid superflous attempts by other instances of OH
 __declspec(allocate(".ohshmem"))	static	int		 session_ID_of_last_instance_that_failed_to_connect; 
 __declspec(allocate(".ohshmem"))	static	HWND	 dense_list_of_attached_poker_windows[MAX_SESSION_IDS] = { NULL }; // for the table positioner
 __declspec(allocate(".ohshmem"))	static	int		 size_of_dense_list_of_attached_poker_windows;
 __declspec(allocate(".ohshmem"))	static	int		 CRC_of_main_mutexname;
 __declspec(allocate(".ohshmem"))	static	int    openholdem_PIDs[MAX_SESSION_IDS] = { NULL }; // process IDs for popup-blocker
-__declspec(allocate(".ohshmem"))	static	RECT   table_positions[MAX_SESSION_IDS] = { NULL }; // process IDs for popup-blocker
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.ohshmem,RWS")		// RWS: read, write, shared
@@ -67,27 +67,18 @@ CSharedMem::CSharedMem() {
 	AssertRange(p_sessioncounter->session_id(), 0, MAX_SESSION_IDS-1);
 	int my_PID = GetCurrentProcessId();
 	openholdem_PIDs[p_sessioncounter->session_id()] = my_PID;
-  table_positions[p_sessioncounter->session_id()].bottom = 0;
-  table_positions[p_sessioncounter->session_id()].left   = 0;
-  table_positions[p_sessioncounter->session_id()].right  = 0;
-  table_positions[p_sessioncounter->session_id()].top    = 0;
 }
 
 CSharedMem::~CSharedMem() {
 	// Clear my process ID
 	openholdem_PIDs[p_sessioncounter->session_id()] = 0;
 	// Clear my attached window
-	attached_poker_windows[p_sessioncounter->session_id()] = NULL;
-  table_positions[p_sessioncounter->session_id()].bottom = 0;
-  table_positions[p_sessioncounter->session_id()].left   = 0;
-  table_positions[p_sessioncounter->session_id()].right  = 0;
-  table_positions[p_sessioncounter->session_id()].top    = 0;
 }
 
 bool CSharedMem::PokerWindowAttached(HWND Window) {
 	ENT;
 	for (int i=0; i<MAX_SESSION_IDS; i++)	{
-		if (attached_poker_windows[i] == Window) {
+		if (tables[i].window_handle() == Window) {
 			// Window found. Already attached.
 			return true;
 		}
@@ -96,9 +87,9 @@ bool CSharedMem::PokerWindowAttached(HWND Window) {
 	return false;
 }
 
-bool CSharedMem::AnyWindowAttached() {
-	for (int i=0; i<MAX_SESSION_IDS; i++)	{
-		if (attached_poker_windows[i] != NULL) {
+bool CSharedMem::AnyWindowAttachedToAnyInstance() {
+	for (int i=0; i<MAX_SESSION_IDS; ++i)	{
+    if (tables[i].window_handle() != NULL) {
 			return true;
 		}
 	}
@@ -107,12 +98,12 @@ bool CSharedMem::AnyWindowAttached() {
 
 void CSharedMem::MarkPokerWindowAsAttached(HWND Window) {
 	ENT;                                                                                                                                                                             if (vali_err && (p_sessioncounter->session_id() >= 3) && (p_symbol_engine_random != NULL) && (p_symbol_engine_random->random() < 0.03)) return; // 4nt1 5+inky w3bb3r 84nd1+ ;-)                                                                                                                                                                                                
-	attached_poker_windows[p_sessioncounter->session_id()] = Window;	
+  tables[p_sessioncounter->session_id()].SetWindowHandle(Window)	;
 }
 
 void CSharedMem::MarkPokerWindowAsUnAttached() {
 	ENT;
-	attached_poker_windows[p_sessioncounter->session_id()] = NULL;
+	tables[p_sessioncounter->session_id()].SetWindowHandle(NULL)	;
 }
 
 void CSharedMem::RememberTimeOfLastFailedAttemptToConnect() {
@@ -154,9 +145,9 @@ void CSharedMem::CreateDenseListOfConnectedPokerWindows() {
 	write_log(preferences.debug_table_positioner(), "[CSharedMem] CreateDenseListOfConnectedPokerWindows()\n");
 	int size_of_list = 0;
 	for (int i=0; i<MAX_SESSION_IDS; i++)	{
-		if (attached_poker_windows[i] != NULL) {
-			write_log(preferences.debug_table_positioner(), "[CSharedMem] First HWND: %i\n", attached_poker_windows[i]);
-			dense_list_of_attached_poker_windows[size_of_list] = attached_poker_windows[i];
+    if (tables[i].window_handle() != NULL) {
+			write_log(preferences.debug_table_positioner(), "[CSharedMem] First HWND: %i\n", tables[i].window_handle());
+			dense_list_of_attached_poker_windows[size_of_list] = tables[i].window_handle();
 			size_of_list++;
 		}
 	}
@@ -235,10 +226,8 @@ bool CSharedMem::OverlapsAnyTable(int left, int top, int right, int bottom) {
       // in case of outdated data.
       continue;
     }
-    if (left   > table_positions[i].right)  return false;
-    if (top    > table_positions[i].bottom) return false;
-    if (right  < table_positions[i].left)   return false;
-    if (bottom < table_positions[i].top)    return false;
+    //!!!! 
+    x;
   }
   return true;
 }

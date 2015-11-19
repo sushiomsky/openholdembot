@@ -32,7 +32,7 @@ class CSharedMem {
  public:
 	// public accessors and mutators
 	bool PokerWindowAttached(HWND Window);
-	bool AnyWindowAttached();
+	bool AnyWindowAttachedToAnyInstance();
 	void MarkPokerWindowAsAttached(HWND Window);
 	void MarkPokerWindowAsUnAttached();
 	void RememberTimeOfLastFailedAttemptToConnect();
