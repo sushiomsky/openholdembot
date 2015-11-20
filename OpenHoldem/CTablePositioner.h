@@ -14,6 +14,8 @@
 #ifndef INC_TABLE_POSITIONER_H
 #define INC_TABLE_POSITIONER_H
 
+class CSharedTableInfo;
+
 class CTablePositioner {
  public:
 	CTablePositioner();
@@ -23,18 +25,14 @@ class CTablePositioner {
 	void PositionMyWindow();
 	// To be called once per heartbeat
 	void AlwaysKeepPositionIfEnabled();
-  void ResizeToTargetSize();
+  void ResizeToTargetSize(); //!!!!!
  private:
 	void PositionMyWindow(HWND *list_of_tables);
 	bool TryLeftSideOfTable(HWND HWND_of_potential_neighbour_table);
 	bool TryTopSideOfTable(HWND HWND_of_potential_neighbour_table);
 	bool TryBottomRightPosition();
 	bool TryPosition(int left_x, int top_y);
-	void MoveToTopLeft();
-	void MoveWindowToItsPosition();
- private:
-  void ResizeToClientSize(int new_width, int new_height);
-  void ResizeToTotalSize(int new_width, int new_height);
+  bool RegionOverlapsAnyTable(int left, int top, int right, int bottom);
  private:
 	int _number_of_tables;
 	HWND *HWNDs_of_child_windows;

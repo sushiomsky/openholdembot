@@ -16,7 +16,9 @@
 
 #include "CAutoConnector.h"
 #include "CPreferences.h"
+#include "CSessionCounter.h"
 #include "CSharedMem.h"
+#include "CSharedTableInfo.h"
 #include "../CTablemap/CTableMapAccess.h"
 #include "MagicNumbers.h"
 #include "WinDef.h"
@@ -24,11 +26,11 @@
 
 CTablePositioner *p_table_positioner = NULL;
 
-CTablePositioner::CTablePositioner()
-{}
+CTablePositioner::CTablePositioner() {
+}
 
-CTablePositioner::~CTablePositioner()
-{}
+CTablePositioner::~CTablePositioner() {
+}
 
 // To be called once after connection
 void CTablePositioner::PositionMyWindow() {		
@@ -36,7 +38,6 @@ void CTablePositioner::PositionMyWindow() {
 	// Use the shared memory (auto-connector) for that. 
 	HWNDs_of_child_windows	= p_sharedmem->GetDenseListOfConnectedPokerWindows();
 	_number_of_tables		= p_sharedmem->SizeOfDenseListOfAttachedPokerWindows();
-
 	if (_number_of_tables <= 0)	{
 		// Do nothing if there are 0 tables connected.
 		// Actually an empty list of tables consists of only NULLs,
@@ -104,7 +105,7 @@ void CTablePositioner::PositionMyWindow(HWND *list_of_tables) {
 		// and mouse-movements at the lobby are more reliable
 		// if relative lobby-coordinates are equal to absolute screen-coordinates
 		// and we don't have to care if the right window is active.
-		MoveToTopLeft();
+    p_sharedmem->MyTable()->MoveToTopLeft();
 		return;
 	}
 	// Thereafter always try the bottom-right-position first
@@ -127,7 +128,7 @@ void CTablePositioner::PositionMyWindow(HWND *list_of_tables) {
 	// If we couldn't position a table we move it to top-left
 	// and hope that it occludes only the lobby 
 	// and not multiple tables in the middle of the screen
-	MoveToTopLeft();
+	p_sharedmem->MyTable()->MoveToTopLeft(); 
 }
 
 bool CTablePositioner::TryLeftSideOfTable(HWND HWND_of_potential_neighbour_table) {
@@ -163,7 +164,7 @@ bool CTablePositioner::TryPosition(int left_x, int top_y) {
 		left_x, top_y);
   int right_x = left_x; //!!!
   int bottom_y = top_y;
-  if (p_sharedmem->OverlapsAnyTable(left_x, top_y, right_x, bottom_y)) {
+  if (RegionOverlapsAnyTable(left_x, top_y, right_x, bottom_y)) {
   	write_log(preferences.debug_table_positioner(), "[CTablePositioner] TryPosition() Candidate-position overlaps other table\n");
 		return false;
 	}
@@ -174,42 +175,8 @@ bool CTablePositioner::TryPosition(int left_x, int top_y) {
 	write_log(preferences.debug_table_positioner(), "[CTablePositioner] TryPosition() Found a free slot\n");
 	write_log(preferences.debug_table_positioner(), "[CTablePositioner] TryPosition() Going to move the table to %i, %i\n",
 		_new_left_x, _new_top_y);
-	MoveWindowToItsPosition();
+  p_sharedmem->MyTable()->Move(_new_left_x, _new_top_y);
 	return true;
-}
-
-void CTablePositioner::MoveToTopLeft() {
-	write_log(preferences.debug_table_positioner(), "[CTablePositioner] MoveToTopLeft()\n");
-	_new_left_x = 0;
-	_new_top_y  = 0;
-	MoveWindowToItsPosition();
-}
-
-// Precondition: position and size defined
-void CTablePositioner::MoveWindowToItsPosition() {
-	write_log(preferences.debug_table_positioner(), "[CTablePositioner] MoveWindowToItsPosition()\n");
-  // Consistancy checks
-	if (_new_left_x      < 0 || _new_left_x   > _desktop_rectangle.right
-	  	|| _new_top_y    < 0 || _new_top_y    > _desktop_rectangle.bottom
-		  || _table_size_x < 1 || _table_size_x > _desktop_rectangle.right
-		  || _table_size_y < 1 || _table_size_y > _desktop_rectangle.bottom) {
-		// Values out of sane range
-		write_log(preferences.debug_table_positioner(), "[CTablePositioner] Values out of sane range; probably not yet initialized\n");
-		write_log(preferences.debug_table_positioner(), "[CTablePositioner] _new_left_x   = %i\n", _new_left_x);
-		write_log(preferences.debug_table_positioner(), "[CTablePositioner] _new_top_y    = %i\n", _new_top_y);
-		write_log(preferences.debug_table_positioner(), "[CTablePositioner] _table_size_x = %i\n", _table_size_x);
-		write_log(preferences.debug_table_positioner(), "[CTablePositioner] _table_size_y = %i\n", _table_size_y);
-		return;
-	}
-  MoveWindow(p_autoconnector->attached_hwnd(), 
-		_new_left_x, _new_top_y, 
-		_table_size_x, _table_size_y, 
-		true);	// true = Redraw the table.
-  // Update shared mem
-  int right = _new_left_x + _table_size_x - 1;
-  int bottom = _new_top_y + _table_size_y - 1;
-  p_sharedmem->StoreTablePosition(_new_left_x, _new_top_y, 
-    right, bottom);
 }
 
 // To be called once per heartbeat
@@ -226,55 +193,23 @@ void CTablePositioner::AlwaysKeepPositionIfEnabled() {
 		write_log(preferences.debug_table_positioner(), "[CTablePositioner] AlwaysKeepPositionIfEnabled() position is good\n");
 	}	else {
 		write_log(preferences.debug_table_positioner(), "[CTablePositioner] AlwaysKeepPositionIfEnabled() restoring old position\n");
-		MoveWindowToItsPosition();
+		p_sharedmem->MyTable()->Move(_new_left_x, _new_top_y);
 	}
 }
 
-void CTablePositioner::ResizeToTargetSize() {
-  int width;
-  int height;
-  p_tablemap_access->SetClientSize("targetsize", &width, &height);
-  if (width <= 0 || height <= 0) {
-    write_log(preferences.debug_table_positioner(), "[CTablePositioner] target size <= 0\n");
-    return;
+bool CTablePositioner::RegionOverlapsAnyTable(int left, int top, int right, int bottom) {
+  int session_ID = p_sessioncounter->session_id();
+  for (int i=0; i<MAX_SESSION_IDS; ++i) {
+    if (i == session_ID) {
+      // Position belongs to me and is not occupied
+      // Should be (0, 0, 0, 0), but better ignore
+      // in case of outdated data.
+      continue;
+    }
+    if (p_sharedmem->Table(i)->OverlapsRegion(left, top, right, bottom)) {
+      return true;
+    }
   }
-  ResizeToClientSize(width, height);
+  return false;
 }
 
-void CTablePositioner::ResizeToClientSize(int new_width, int new_height) {
-  assert(new_width > 0);
-  assert(new_height > 0);
-  RECT old_client_size;
-  GetClientRect(p_autoconnector->attached_hwnd(), &old_client_size);
-  int old_width  = old_client_size.right - old_client_size.left;
-  int old_height = old_client_size.bottom - old_client_size.top;
-  write_log(preferences.debug_table_positioner(), "[CTablePositioner] current client size: %i, %i\n",
-    old_width, old_height);
-  write_log(preferences.debug_table_positioner(), "[CTablePositioner] target client size: %i, %i\n",
-    new_width, new_height);
-  if (old_width == new_width && old_height == new_height) return;
-  RECT old_position;
-  GetWindowRect(p_autoconnector->attached_hwnd(), &old_position);
-  int new_total_width = old_position.right - old_position.left
-    + new_width- old_width;
-  int new_total_height = old_position.bottom - old_position.top
-    + new_height - old_height;
-  ResizeToTotalSize(new_total_width, new_total_height);
-}
-
-void CTablePositioner::ResizeToTotalSize(int new_width, int new_height) {
-  write_log(preferences.debug_table_positioner(), 
-    "[CTablePositioner] Resizing window to total size %i, %i. Keeping old position\n",
-    new_width, new_height);
-  RECT old_position;
-  GetWindowRect(p_autoconnector->attached_hwnd(), &old_position);
-  MoveWindow(p_autoconnector->attached_hwnd(), 
-    old_position.left, old_position.top,
-    new_width, new_height,
-		true);	// true = Redraw the table.
-  // Update shared mem
-  int right = old_position.left + new_width - 1;
-  int bottom = old_position.top * new_height - 1;
-  p_sharedmem->StoreTablePosition(old_position.left, old_position.top,
-    right, bottom);
-}

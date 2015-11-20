@@ -199,7 +199,7 @@ void CAutoConnector::GoIntoPopupBlockingMode()
 	// We have a free instance that has nothing to do.
 	// Care about potential popups here, once per auto-connector-heartbeat.
 	write_log(preferences.debug_autoconnector(), "[CAutoConnector] Not connected. Going into popup-blocking mode.\n");
-	if (p_sharedmem->AnyWindowAttachedToAnyInstance()())
+	if (p_sharedmem->AnyWindowAttachedToAnyInstance())
 	{
 		// Only handle popups if at least one bot is connected to a table.
 		// Especially stop popup-handling if the last table got closed

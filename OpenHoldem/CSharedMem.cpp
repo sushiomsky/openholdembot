@@ -39,8 +39,8 @@
 
 #pragma data_seg(".ohshmem") // names are limited to 8 chars, including the dot.
 
-__declspec(allocate(".ohshmem"))	static	CSharedTableInfo tables[MAX_SESSION_IDS] = { NULL };	// for the auto-connector and table-posityioner
-__declspec(allocate(".ohshmem"))	static	time_t last_failed_attempt_to_connect;	// last time any instance failed; to avoid superflous attempts by other instances of OH
+__declspec(allocate(".ohshmem"))	static	CSharedTableInfo tables[MAX_SESSION_IDS];	// for the auto-connector and table-posityioner
+__declspec(allocate(".ohshmem"))	static	time_t last_failed_attempt_to_connect;	  // last time any instance failed; to avoid superflous attempts by other instances of OH
 __declspec(allocate(".ohshmem"))	static	int		 session_ID_of_last_instance_that_failed_to_connect; 
 __declspec(allocate(".ohshmem"))	static	HWND	 dense_list_of_attached_poker_windows[MAX_SESSION_IDS] = { NULL }; // for the table positioner
 __declspec(allocate(".ohshmem"))	static	int		 size_of_dense_list_of_attached_poker_windows;
@@ -208,36 +208,3 @@ bool CSharedMem::IsAnyOpenHoldemProcess(int PID) {
 	return false;
 }
 
-void CSharedMem::StoreTablePosition(int left, int top, int right, int bottom) {
-  ENT;
-  int session_ID = p_sessioncounter->session_id();
-  table_positions[session_ID].left   = left;
-  table_positions[session_ID].top    = top;
-  table_positions[session_ID].right  = right;
-  table_positions[session_ID].bottom = bottom;
-}
-
-bool CSharedMem::OverlapsAnyTable(int left, int top, int right, int bottom) {
-  int session_ID = p_sessioncounter->session_id();
-  for (int i=0; i<MAX_SESSION_IDS; ++i) {
-    if (i == session_ID) {
-      // Position belongs to me and is not occupied
-      // Should be (0, 0, 0, 0), but better ignore
-      // in case of outdated data.
-      continue;
-    }
-    //!!!! 
-    x;
-  }
-  return true;
-}
-
-int TablePositionLeft() {
-  int session_ID = p_sessioncounter->session_id();
-  return table_positions[session_ID].left;
-}
-
-int TablePositionTop() {
-  int session_ID = p_sessioncounter->session_id();
-  return table_positions[session_ID].top;
-}

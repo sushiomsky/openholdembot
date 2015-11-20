@@ -25,6 +25,8 @@
 //
 // We chose the first solution for its simplicity
 
+class CSharedTableInfo;
+
 class CSharedMem {
  public:
 	CSharedMem();
@@ -42,13 +44,8 @@ class CSharedMem {
 	int  SizeOfDenseListOfAttachedPokerWindows();
 	bool IsAnyOpenHoldemProcess(int PID);
  public:
-  // For table positioner
-  // It is most easz if everzbodz shares his position
-  void StoreTablePosition(int left, int top, int right, int bottom);
-  bool OverlapsAnyTable(int left, int top, int right, int bottom);
-  // My position
-  int TablePositionLeft();
-  int TablePositionTop();
+  CSharedTableInfo *MyTable();
+  CSharedTableInfo *Table(int openholdem_session_ID);
  private:
 	void CreateDenseListOfConnectedPokerWindows();
 	void VerifyMainMutexName();

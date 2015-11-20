@@ -31,6 +31,15 @@ class CSharedTableInfo {
   int height();
  public:
   bool OverlapsTable(CSharedTableInfo *other_table);
+  bool OverlapsRegion(RECT *region);
+  bool OverlapsRegion(int left, int top, int right, int bottom);
+ public:
+  void Move(int left, int top);
+  void MoveToTopLeft();
+  void ResizeToTotalSize(int new_width, int new_height);
+  void ResizeToClientSize(int new_width, int new_height);
+ private:
+  void Storeposition();
  private:
   HWND _window_handle;
   RECT _position;
