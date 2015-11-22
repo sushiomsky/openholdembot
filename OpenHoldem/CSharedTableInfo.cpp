@@ -17,6 +17,7 @@
 #include "CSharedTableInfo.h"
 
 #include "CPreferences.h"
+#include "..\CTablemap\CTableMapAccess.h"
 
 CSharedTableInfo::CSharedTableInfo() {
   _window_handle = NULL;
@@ -100,7 +101,62 @@ void CSharedTableInfo::MoveToTopLeft() {
 }
 
 void CSharedTableInfo::Move(int left, int top) {
-  //!!!!!
+  RECT old_position;
+  GetWindowRect(_window_handle, &old_position);
+  int width  = old_position.right - old_position.left;
+  int height = old_position.bottom - old_position.top;
+  assert(width  >= 0);
+  assert(height >= 0);
+  MoveWindow(_window_handle, left, top, width, height, true);
+}
+
+void CSharedTableInfo::ResizeToTargetSize() {
+  int width;
+  int height;
+  p_tablemap_access->SetClientSize("targetsize", &width, &height);
+  if (width <= 0 || height <= 0) {
+    write_log(preferences.debug_table_positioner(), "[CTablePositioner] target size <= 0\n");
+    return;
+  }
+  ResizeToClientSize(width, height);
+}
+
+void CSharedTableInfo::ResizeToClientSize(int new_width, int new_height) {
+  assert(new_width > 0);
+  assert(new_height > 0);
+  RECT old_client_size;
+  GetClientRect(_window_handle, &old_client_size);
+  int old_width  = old_client_size.right - old_client_size.left;
+  int old_height = old_client_size.bottom - old_client_size.top;
+  write_log(preferences.debug_table_positioner(), "[CTablePositioner] current client size: %i, %i\n",
+    old_width, old_height);
+  write_log(preferences.debug_table_positioner(), "[CTablePositioner] target client size: %i, %i\n",
+    new_width, new_height);
+  if (old_width == new_width && old_height == new_height) return;
+  RECT old_position;
+  GetWindowRect(_window_handle, &old_position);
+  int new_total_width = old_position.right - old_position.left
+    + new_width- old_width;
+  int new_total_height = old_position.bottom - old_position.top
+    + new_height - old_height;
+  ResizeToTotalSize(new_total_width, new_total_height);
+}
+
+void CSharedTableInfo::ResizeToTotalSize(int new_width, int new_height) {
+  write_log(preferences.debug_table_positioner(), 
+    "[CTablePositioner] Resizing window to total size %i, %i. Keeping old position\n",
+    new_width, new_height);
+  RECT old_position;
+  GetWindowRect(_window_handle, &old_position);
+  MoveWindow(_window_handle, 
+    old_position.left, old_position.top,
+    new_width, new_height,
+		true);	// true = Redraw the table.
+  // Update shared mem
+  int right = old_position.left + new_width - 1;
+  int bottom = old_position.top * new_height - 1;
+  //!!!!p_sharedmem->StoreTablePosition(old_position.left, old_position.top,
+  //  right, bottom);
 }
 
 /*
@@ -131,52 +187,7 @@ void CTablePositioner::MoveWindowToItsPosition() {
     right, bottom);
 }
 
-void CTablePositioner::ResizeToTargetSize() {
-  int width;
-  int height;
-  p_tablemap_access->SetClientSize("targetsize", &width, &height);
-  if (width <= 0 || height <= 0) {
-    write_log(preferences.debug_table_positioner(), "[CTablePositioner] target size <= 0\n");
-    return;
-  }
-  ResizeToClientSize(width, height);
-}
 
-void CTablePositioner::ResizeToClientSize(int new_width, int new_height) {
-  assert(new_width > 0);
-  assert(new_height > 0);
-  RECT old_client_size;
-  GetClientRect(p_autoconnector->attached_hwnd(), &old_client_size);
-  int old_width  = old_client_size.right - old_client_size.left;
-  int old_height = old_client_size.bottom - old_client_size.top;
-  write_log(preferences.debug_table_positioner(), "[CTablePositioner] current client size: %i, %i\n",
-    old_width, old_height);
-  write_log(preferences.debug_table_positioner(), "[CTablePositioner] target client size: %i, %i\n",
-    new_width, new_height);
-  if (old_width == new_width && old_height == new_height) return;
-  RECT old_position;
-  GetWindowRect(p_autoconnector->attached_hwnd(), &old_position);
-  int new_total_width = old_position.right - old_position.left
-    + new_width- old_width;
-  int new_total_height = old_position.bottom - old_position.top
-    + new_height - old_height;
-  ResizeToTotalSize(new_total_width, new_total_height);
-}
 
-void CTablePositioner::ResizeToTotalSize(int new_width, int new_height) {
-  write_log(preferences.debug_table_positioner(), 
-    "[CTablePositioner] Resizing window to total size %i, %i. Keeping old position\n",
-    new_width, new_height);
-  RECT old_position;
-  GetWindowRect(p_autoconnector->attached_hwnd(), &old_position);
-  MoveWindow(p_autoconnector->attached_hwnd(), 
-    old_position.left, old_position.top,
-    new_width, new_height,
-		true);	// true = Redraw the table.
-  // Update shared mem
-  int right = old_position.left + new_width - 1;
-  int bottom = old_position.top * new_height - 1;
-  p_sharedmem->StoreTablePosition(old_position.left, old_position.top,
-    right, bottom);
-}
+
 */

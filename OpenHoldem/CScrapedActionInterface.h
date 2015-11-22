@@ -41,7 +41,7 @@ class CScrapedActionInterface {
   CString _i86_button_state;
 	CString	_i86X_button_state[k_max_number_of_i86X_buttons];
 	CString	_button_state[k_max_number_of_buttons];
-public: //!!!!!
+public: //!!!
 	CString _button_label[k_max_number_of_buttons];
 protected:
 	CString	_betpot_button_state[k_max_betpot_buttons];

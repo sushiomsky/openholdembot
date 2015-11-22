@@ -25,7 +25,6 @@ class CTablePositioner {
 	void PositionMyWindow();
 	// To be called once per heartbeat
 	void AlwaysKeepPositionIfEnabled();
-  void ResizeToTargetSize(); //!!!!!
  private:
 	void PositionMyWindow(HWND *list_of_tables);
 	bool TryLeftSideOfTable(HWND HWND_of_potential_neighbour_table);

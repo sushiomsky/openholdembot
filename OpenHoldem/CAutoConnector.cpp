@@ -31,6 +31,7 @@
 #include "CScraper.h"
 #include "CScraperAccess.h"
 #include "CSharedMem.h"
+#include "CSharedTableInfo.h"
 #include "CTableMapLoader.h"
 #include "CTableState.h"
 #include "CTablePositioner.h"
@@ -294,7 +295,7 @@ bool CAutoConnector::Connect(HWND targetHWnd) {
 			::GetWindowText(_attached_hwnd, title, MAX_WINDOW_TITLE);
       WriteLogTableReset();
 
-      p_table_positioner->ResizeToTargetSize();
+      p_sharedmem->MyTable()->ResizeToTargetSize();
 			p_table_positioner->PositionMyWindow();
 			p_autoplayer->EngageAutoPlayerUponConnectionIfNeeded();
 		}

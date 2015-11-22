@@ -36,6 +36,7 @@ class CSharedTableInfo {
  public:
   void Move(int left, int top);
   void MoveToTopLeft();
+  void ResizeToTargetSize();
   void ResizeToTotalSize(int new_width, int new_height);
   void ResizeToClientSize(int new_width, int new_height);
  private:

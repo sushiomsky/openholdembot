@@ -208,3 +208,12 @@ bool CSharedMem::IsAnyOpenHoldemProcess(int PID) {
 	return false;
 }
 
+CSharedTableInfo *CSharedMem::MyTable() {
+  return Table(p_sessioncounter->session_id());
+}
+
+CSharedTableInfo *CSharedMem::Table(int openholdem_session_ID) {
+  assert(openholdem_session_ID >= 0);
+  assert(openholdem_session_ID < MAX_SESSION_IDS);
+  return &tables[openholdem_session_ID];
+}
