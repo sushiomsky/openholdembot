@@ -19,7 +19,13 @@
 #include "OH_MessageBox.h"
 
 // CPreferences needs to be globally created, in order to provide saved settings to CMainFrame::PreCreateWindow method
-CPreferences		preferences;
+//!!!!!CPreferences preferences;
+
+// CPreferences needs to be globally created, in order to provide saved settings to CMainFrame::PreCreateWindow method
+//!!!!!CPreferences preferences;
+__declspec(allocate(".ohshmed"))	/*static*/ /*extern*/	CPreferences preferences;
+#pragma data_seg()
+#pragma comment(linker, "/SECTION:.ohshmed,RWS")		// RWS: read, write, shared
 
 //
 // Constructor and destructor

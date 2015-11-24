@@ -352,7 +352,7 @@ private:
 	CCritSec		m_critsec;
 	CString			_preferences_heading;
 };
-
-extern CPreferences preferences;
+#pragma data_seg(".ohshmed")
+__declspec(allocate(".ohshmed")) extern CPreferences preferences;
 
 #endif // INC_CPREFERENCES_H_
