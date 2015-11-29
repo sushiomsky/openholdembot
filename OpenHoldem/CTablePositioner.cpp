@@ -84,6 +84,7 @@ void CTablePositioner::PositionMyWindow(HWND *list_of_tables) {
 		// But it does not hurt to avoid trouble with p_autoconnector->attached_hwnd()
 		return;
 	}
+  DumpWindowPositions();
 	// Pre-calculate our table-size
 	RECT current_position;
 	GetWindowRect(p_autoconnector->attached_hwnd(), &current_position);
@@ -213,3 +214,9 @@ bool CTablePositioner::RegionOverlapsAnyTable(int left, int top, int right, int 
   return false;
 }
 
+void CTablePositioner::DumpWindowPositions() {
+  if (!preferences.debug_table_positioner()) return;
+  for (int i=0; i<MAX_SESSION_IDS; ++i) {
+    p_sharedmem->Table(i)->Dump();
+  }
+}

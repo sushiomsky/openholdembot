@@ -17,6 +17,7 @@
 #include "CSharedTableInfo.h"
 
 #include "CPreferences.h"
+#include "CSessionCounter.h"
 #include "..\CTablemap\CTableMapAccess.h"
 
 CSharedTableInfo::CSharedTableInfo() {
@@ -41,11 +42,11 @@ void CSharedTableInfo::SetWindowHandle(HWND handle) {
   _window_handle = handle;
 }
 
-void CSharedTableInfo::SetPosition(RECT position) {
-  _position.bottom = position.bottom;
-  _position.left   = position.left;
-  _position.right  = position.right;
-  _position.top    = position.top;
+void CSharedTableInfo::StorePosition(int left, int top, int right, int bottom) {
+  _position.bottom = bottom;
+  _position.left   = left;
+  _position.right  = right;
+  _position.top    = top;
 }
 
 HWND CSharedTableInfo::window_handle() {
@@ -54,8 +55,9 @@ HWND CSharedTableInfo::window_handle() {
 
 void CSharedTableInfo::GetPosition(RECT *position) {
   position->left   = _position.left;
-  position->right  = _position.right;
   position->top    = _position.top;
+  position->right  = _position.right;
+  position->bottom = _position.bottom;
 }
 
 int CSharedTableInfo::width() {
@@ -105,9 +107,12 @@ void CSharedTableInfo::Move(int left, int top) {
   GetWindowRect(_window_handle, &old_position);
   int width  = old_position.right - old_position.left;
   int height = old_position.bottom - old_position.top;
+  int right  = left + width;
+  int bottom = top + height;
   assert(width  >= 0);
   assert(height >= 0);
   MoveWindow(_window_handle, left, top, width, height, true);
+  StorePosition(left, top, right, bottom);
 }
 
 void CSharedTableInfo::ResizeToTargetSize() {
@@ -155,8 +160,16 @@ void CSharedTableInfo::ResizeToTotalSize(int new_width, int new_height) {
   // Update shared mem
   int right = old_position.left + new_width - 1;
   int bottom = old_position.top * new_height - 1;
-  //!!!!p_sharedmem->StoreTablePosition(old_position.left, old_position.top,
-  //  right, bottom);
+  StorePosition(old_position.left, old_position.top,
+    right, bottom);
+}
+
+void CSharedTableInfo::Dump() {
+  write_log(preferences.debug_table_positioner(), "[CTablePositioner] Table %i: [%i, %i, %i, %i] size [%i, %i] handle %i\n",
+    p_sessioncounter->session_id(),
+    _position.left, _position.top, _position.right, _position.bottom,
+    width(), height(), 
+    _window_handle);
 }
 
 /*

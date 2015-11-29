@@ -33,6 +33,8 @@ class CTablePositioner {
 	bool TryPosition(int left_x, int top_y);
   bool RegionOverlapsAnyTable(int left, int top, int right, int bottom);
  private:
+  void DumpWindowPositions();
+ private:
 	int _number_of_tables;
 	HWND *HWNDs_of_child_windows;
 	int _table_size_x;

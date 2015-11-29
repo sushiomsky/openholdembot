@@ -23,7 +23,7 @@ class CSharedTableInfo {
   // CSharedTableInfo gets stored in shared memory
   // Each process must only set the values for his own tables
   void SetWindowHandle(HWND handle);
-  void SetPosition(RECT position);
+  void StorePosition(int left, int top, int right, int bottom);
  public:
   HWND window_handle();
   void GetPosition(RECT *position);
@@ -39,8 +39,8 @@ class CSharedTableInfo {
   void ResizeToTargetSize();
   void ResizeToTotalSize(int new_width, int new_height);
   void ResizeToClientSize(int new_width, int new_height);
- private:
-  void Storeposition();
+ public:
+  void Dump();
  private:
   HWND _window_handle;
   RECT _position;
